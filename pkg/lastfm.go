@@ -78,3 +78,17 @@ func (client *Client) GetAlbumInfo(artist string, album string) (AlbumInfo, erro
 	err = json.Unmarshal(data, &result)
 	return result, err
 }
+
+func (client *Client) GetTopTracks(user string) ([]Track, error) {
+	var tmp = Toptracks{}
+	url := fmt.Sprintf("%smethod=user.gettoptracks&user=%s&api_key=%s&format=json",
+		baseURL, user, client.APIKey)
+
+	data, err := unet.FetchData(url)
+	if err != nil {
+		return []Track{}, err
+	}
+
+	err = json.Unmarshal(data, &tmp)
+	return tmp.Data.Tracks, err
+}

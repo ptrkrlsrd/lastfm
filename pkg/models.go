@@ -70,13 +70,23 @@ type Bio struct {
 }
 
 type Track struct {
-	Name     string `json:"name"`
-	URL      string `json:"url"`
-	Duration string `json:"duration"`
-	Attr     struct {
+	Attr struct {
 		Rank string `json:"rank"`
 	} `json:"@attr"`
-	Artist Artist `json:"artist"`
+	Artist   Artist `json:"artist"`
+	Duration string `json:"duration"`
+	Image    []struct {
+		Text string `json:"#text"`
+		Size string `json:"size"`
+	} `json:"image"`
+	Mbid       string `json:"mbid"`
+	Name       string `json:"name"`
+	Playcount  string `json:"playcount"`
+	Streamable struct {
+		Text      string `json:"#text"`
+		Fulltrack string `json:"fulltrack"`
+	} `json:"streamable"`
+	URL string `json:"url"`
 }
 
 type ArtistInfo struct {
@@ -196,4 +206,17 @@ type InArtistInfo struct {
 		} `json:"tags"`
 		Bio Bio `json:"bio"`
 	} `json:"artist"`
+}
+
+type Toptracks struct {
+	Data struct {
+		Attr struct {
+			Page       string `json:"page"`
+			PerPage    string `json:"perPage"`
+			Total      string `json:"total"`
+			TotalPages string `json:"totalPages"`
+			User       string `json:"user"`
+		} `json:"@attr"`
+		Tracks []Track `json:"track"`
+	} `json:"toptracks"`
 }
