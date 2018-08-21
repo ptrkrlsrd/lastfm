@@ -12,28 +12,27 @@ const (
 )
 
 type Client struct {
-	APIKey string
+	apiKey string
 }
 
 func NewClient(apiKey string) Client {
-	client := Client{APIKey: apiKey}
-	return client
+	return Client{apiKey: apiKey}
 }
 
 func (client *Client) GetSimilarArtists(query string) (SimilarArtists, error) {
 	url := fmt.Sprintf("%smethod=artist.getsimilar&artist=%s&api_key=%s&limit=%d&format=json",
-		baseURL, query, client.APIKey, 30)
+		baseURL, query, client.apiKey, 30)
 
-	var inModel = struct {
+	var inModel struct {
 		Data struct {
 			Artists []Artist `json:"artist"`
 			Input   struct {
 				Artist string `json:"artist"`
 			} `json:"@attr"`
 		} `json:"similarartists"`
-	}{}
+	}
 
-	data, err := unet.FetchData(url)
+	data, err := unet.Fetch(url)
 	if err != nil {
 		return SimilarArtists{}, err
 	}
@@ -43,52 +42,85 @@ func (client *Client) GetSimilarArtists(query string) (SimilarArtists, error) {
 		return SimilarArtists{}, err
 	}
 
-	similarartists := SimilarArtists{
+	return SimilarArtists{
 		Artists: inModel.Data.Artists,
 		Input:   inModel.Data.Input.Artist,
-	}
-
-	return similarartists, err
+	}, err
 }
 
 func (client *Client) GetArtistInfo(query string) (ArtistInfo, error) {
-	var result ArtistInfo
-	url := fmt.Sprintf("%smethod=artist.getinfo&artist=%s&api_key=%s&format=json",
-		baseURL, query, client.APIKey)
-
-	data, err := unet.FetchData(url)
-	if err != nil {
-		return result, err
+	var inModel struct {
+		ArtistInfo ArtistInfo `json:"artist"`
 	}
 
-	err = json.Unmarshal(data, &result)
-	return result, err
+	url := fmt.Sprintf("%smethod=artist.getinfo&artist=%s&api_key=%s&format=json",
+		baseURL, query, client.apiKey)
+
+	data, err := unet.Fetch(url)
+	if err != nil {
+		return ArtistInfo{}, err
+	}
+
+	err = json.Unmarshal(data, &inModel)
+	return inModel.ArtistInfo, err
 }
 
 func (client *Client) GetAlbumInfo(artist string, album string) (AlbumInfo, error) {
-	var result AlbumInfo
-	url := fmt.Sprintf("%smethod=album.getinfo&artist=%s&album=%s&api_key=%s&format=json",
-		baseURL, artist, album, client.APIKey)
-
-	data, err := unet.FetchData(url)
-	if err != nil {
-		return result, err
+	var inModel struct {
+		AlbumInfo AlbumInfo `json:"album"`
 	}
 
-	err = json.Unmarshal(data, &result)
-	return result, err
+	url := fmt.Sprintf("%smethod=album.getinfo&artist=%s&album=%s&api_key=%s&format=json",
+		baseURL, artist, album, client.apiKey)
+
+	data, err := unet.Fetch(url)
+	if err != nil {
+		return AlbumInfo{}, err
+	}
+
+	err = json.Unmarshal(data, &inModel)
+	return inModel.AlbumInfo, err
 }
 
 func (client *Client) GetTopTracks(user string) ([]Track, error) {
-	var tmp = Toptracks{}
-	url := fmt.Sprintf("%smethod=user.gettoptracks&user=%s&api_key=%s&format=json",
-		baseURL, user, client.APIKey)
+	var inModel = struct {
+		Data struct {
+			Attr struct {
+				Page       string `json:"page"`
+				PerPage    string `json:"perPage"`
+				Total      string `json:"total"`
+				TotalPages string `json:"totalPages"`
+				User       string `json:"user"`
+			} `json:"@attr"`
+			Tracks []Track `json:"track"`
+		} `json:"toptracks"`
+	}{}
 
-	data, err := unet.FetchData(url)
+	url := fmt.Sprintf("%smethod=user.gettoptracks&user=%s&api_key=%s&format=json",
+		baseURL, user, client.apiKey)
+
+	data, err := unet.Fetch(url)
 	if err != nil {
 		return []Track{}, err
 	}
 
-	err = json.Unmarshal(data, &tmp)
-	return tmp.Data.Tracks, err
+	err = json.Unmarshal(data, &inModel)
+	return inModel.Data.Tracks, err
+}
+
+func (client *Client) GetRecentTracks(user string) ([]RecentTrack, error) {
+	var inModel struct {
+		RecentTracks RecentTracks `json:"recenttracks"`
+	}
+
+	url := fmt.Sprintf("%smethod=user.getrecenttracks&user=%s&api_key=%s&format=json",
+		baseURL, user, client.apiKey)
+
+	data, err := unet.Fetch(url)
+	if err != nil {
+		return []RecentTrack{}, err
+	}
+
+	err = json.Unmarshal(data, &inModel)
+	return inModel.RecentTracks.Tracks, err
 }

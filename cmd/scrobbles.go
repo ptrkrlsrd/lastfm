@@ -21,19 +21,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	limit = 10
+)
+
 // scrobblesCmd represents the scrobbles command
 var scrobblesCmd = &cobra.Command{
 	Use:   "scrobbles",
 	Short: "Get an users top scrobbles",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		tracks, err := client.GetTopTracks(args[0])
+		tracks, err := client.GetRecentTracks(args[0])
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		for _, v := range tracks {
-			fmt.Printf("%s: %s (%s plays)\n", v.Artist.Name, v.Name, v.Playcount)
+		for _, v := range tracks[:limit+1] {
+			fmt.Printf(v.ToString())
 		}
 	},
 }

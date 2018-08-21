@@ -24,8 +24,16 @@ import (
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search the API",
+	Args:  cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("search called")
+		searchType := args[0]
+		query := args[1]
+
+		switch searchType {
+		case "artist":
+			a, _ := client.GetArtistInfo(query)
+			fmt.Println(a.Name, a.Tags.Tag)
+		}
 	},
 }
 

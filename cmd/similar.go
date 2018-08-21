@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -26,6 +27,14 @@ var similarCmd = &cobra.Command{
 	Short: "Get similar artists or albums",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("similar called")
+		s, err := client.GetSimilarArtists("swans")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, v := range s.Artists {
+			fmt.Println(v.Name)
+		}
 	},
 }
 

@@ -38,9 +38,6 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	apiKey := os.Getenv("LASTFM_API")
-	client = lastfm.NewClient(apiKey)
-
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -48,12 +45,15 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	initConfig()
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.lastfm.yaml)")
+	apiKey := os.Getenv("LASTFM_KEY")
+	if apiKey == "" {
+		apiKey = viper.GetString("LASTFM_KEY")
+	}
+	client = lastfm.NewClient(apiKey)
+
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.lastfm.yml)")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -69,7 +69,7 @@ func initConfig() {
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".l" (without extension).
+		// Search config in home directory with name ".lastfm" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".lastfm")
 	}
@@ -78,6 +78,5 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }
