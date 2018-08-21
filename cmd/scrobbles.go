@@ -36,12 +36,13 @@ var scrobblesCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		for _, v := range tracks[:limit+1] {
+		for _, v := range tracks[:limit] {
 			fmt.Printf(v.ToString())
 		}
 	},
 }
 
 func init() {
+	scrobblesCmd.Flags().IntVarP(&limit, "limit", "l", 10, "Limit scrobble count")
 	rootCmd.AddCommand(scrobblesCmd)
 }
