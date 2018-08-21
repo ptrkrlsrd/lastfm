@@ -16,29 +16,51 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
 
 // infoCmd represents the info command
-var infoCmd = &cobra.Command{
-	Use:   "info",
-	Short: "Get info about an artist or an album",
+var artistInfoCmd = &cobra.Command{
+	Use:   "artist",
+	Short: "Get info about an artist",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("info called")
+		query := args[0]
+		artistInfo, err := client.GetArtistInfo(query)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(artistInfo)
 	},
 }
 
+// infoCmd represents the info command
+var albumInfoCmd = &cobra.Command{
+	Use:   "album",
+	Short: "Get info about an album",
+	Args:  cobra.MinimumNArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		artist, album := args[0], args[1]
+		albumInfo, err := client.GetAlbumInfo(artist, album)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(albumInfo)
+	},
+}
+
+// infoCmd represents the info command
+var infoCmd = &cobra.Command{
+	Use:   "info",
+	Short: "Get info about an artist or an album",
+}
+
 func init() {
+	infoCmd.AddCommand(artistInfoCmd)
+	infoCmd.AddCommand(albumInfoCmd)
 	rootCmd.AddCommand(infoCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// infoCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// infoCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
