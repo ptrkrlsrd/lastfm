@@ -36,6 +36,10 @@ var scrobblesCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		if len(tracks) < limit {
+			limit = len(tracks)
+		}
+
 		for _, v := range tracks[:limit] {
 			fmt.Printf(v.ToString())
 		}

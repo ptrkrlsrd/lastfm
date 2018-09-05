@@ -47,9 +47,9 @@ func Execute() {
 func init() {
 	initConfig()
 
-	apiKey := os.Getenv("LASTFM_KEY")
+	apiKey := os.Getenv("LASTFM_API")
 	if apiKey == "" {
-		apiKey = viper.GetString("LASTFM_KEY")
+		apiKey = viper.GetString("LASTFM_API")
 	}
 	client = lastfm.NewClient(apiKey)
 
