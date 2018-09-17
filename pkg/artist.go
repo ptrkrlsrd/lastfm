@@ -53,6 +53,10 @@ type ArtistInfo struct {
 	Bio Bio `json:"bio"`
 }
 
+type ArtistInfoInput struct {
+	ArtistInfo ArtistInfo `json:"artist"`
+}
+
 func (u *ArtistInfo) UnmarshalJSON(data []byte) error {
 	type Alias ArtistInfo
 
@@ -88,4 +92,13 @@ func TransformImages(images []Image) map[string]string {
 type SimpleArtist struct {
 	Name string `json:"#text"`
 	Mbid string `json:"mbid"`
+}
+
+type SimilarArtistsInput struct {
+	Data struct {
+		Artists []Artist `json:"artist"`
+		Input   struct {
+			Artist string `json:"artist"`
+		} `json:"@attr"`
+	} `json:"similarartists"`
 }

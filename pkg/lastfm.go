@@ -20,38 +20,32 @@ func NewClient(apiKey string) Client {
 }
 
 func (client *Client) GetSimilarArtists(query string) (SimilarArtists, error) {
+	var inModel SimilarArtistsInput
+
 	url := fmt.Sprintf("%smethod=artist.getsimilar&artist=%s&api_key=%s&limit=%d&format=json",
 		baseURL, query, client.apiKey, 30)
-
-	var inModel struct {
-		Data struct {
-			Artists []Artist `json:"artist"`
-			Input   struct {
-				Artist string `json:"artist"`
-			} `json:"@attr"`
-		} `json:"similarartists"`
-	}
 
 	data, err := unet.Fetch(url)
 	if err != nil {
 		return SimilarArtists{}, err
 	}
 
-	err = json.Unmarshal(data, &inModel)
-	if err != nil {
+	if err := json.Unmarshal(data, &inModel); err != nil {
 		return SimilarArtists{}, err
 	}
 
+	similarData := inModel.Data
+	artists := similarData.Artists
+	input := similarData.Input.Artist
+
 	return SimilarArtists{
-		Artists: inModel.Data.Artists,
-		Input:   inModel.Data.Input.Artist,
-	}, err
+		Artists: artists,
+		Input:   input,
+	}, nil
 }
 
 func (client *Client) GetArtistInfo(query string) (ArtistInfo, error) {
-	var inModel struct {
-		ArtistInfo ArtistInfo `json:"artist"`
-	}
+	var inModel ArtistInfoInput
 
 	url := fmt.Sprintf("%smethod=artist.getinfo&artist=%s&api_key=%s&format=json",
 		baseURL, query, client.apiKey)
@@ -61,8 +55,11 @@ func (client *Client) GetArtistInfo(query string) (ArtistInfo, error) {
 		return ArtistInfo{}, err
 	}
 
-	err = json.Unmarshal(data, &inModel)
-	return inModel.ArtistInfo, err
+	if err = json.Unmarshal(data, &inModel); err != nil {
+		return ArtistInfo{}, err
+	}
+
+	return inModel.ArtistInfo, nil
 }
 
 func (client *Client) GetAlbumInfo(artist string, album string) (AlbumInfo, error) {
@@ -78,23 +75,15 @@ func (client *Client) GetAlbumInfo(artist string, album string) (AlbumInfo, erro
 		return AlbumInfo{}, err
 	}
 
-	err = json.Unmarshal(data, &inModel)
-	return inModel.AlbumInfo, err
+	if err = json.Unmarshal(data, &inModel); err != nil {
+		return AlbumInfo{}, err
+	}
+
+	return inModel.AlbumInfo, nil
 }
 
 func (client *Client) GetTopTracks(user string) ([]Track, error) {
-	var inModel = struct {
-		Data struct {
-			Attr struct {
-				Page       string `json:"page"`
-				PerPage    string `json:"perPage"`
-				Total      string `json:"total"`
-				TotalPages string `json:"totalPages"`
-				User       string `json:"user"`
-			} `json:"@attr"`
-			Tracks []Track `json:"track"`
-		} `json:"toptracks"`
-	}{}
+	var inModel TopTracksInput
 
 	url := fmt.Sprintf("%smethod=user.gettoptracks&user=%s&api_key=%s&format=json",
 		baseURL, user, client.apiKey)
@@ -104,14 +93,16 @@ func (client *Client) GetTopTracks(user string) ([]Track, error) {
 		return []Track{}, err
 	}
 
-	err = json.Unmarshal(data, &inModel)
-	return inModel.Data.Tracks, err
+	if err = json.Unmarshal(data, &inModel); err != nil {
+		return []Track{}, err
+	}
+
+	topTracksData := inModel.Data
+	return topTracksData.Tracks, nil
 }
 
 func (client *Client) GetRecentTracks(user string) ([]RecentTrack, error) {
-	var inModel struct {
-		RecentTracks RecentTracks `json:"recenttracks"`
-	}
+	var inModel RecentTracksInput
 
 	url := fmt.Sprintf("%smethod=user.getrecenttracks&user=%s&api_key=%s&format=json",
 		baseURL, user, client.apiKey)
@@ -121,6 +112,10 @@ func (client *Client) GetRecentTracks(user string) ([]RecentTrack, error) {
 		return []RecentTrack{}, err
 	}
 
-	err = json.Unmarshal(data, &inModel)
-	return inModel.RecentTracks.Tracks, err
+	if err = json.Unmarshal(data, &inModel); err != nil {
+		return []RecentTrack{}, err
+	}
+
+	recentTracks := inModel.RecentTracks
+	return recentTracks.Tracks, nil
 }
