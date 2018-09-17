@@ -4,13 +4,13 @@
 
 ## Installation
 Add the following environment variables to `~/.profile`:
-`
+```
 export LASTFM_API="<API>"
 export LASTFM_KEY="<KEY>"
-`
+```
 
 ## Usage
-`
+```
 LastFM
 
 Usage:
@@ -29,4 +29,4 @@ Flags:
   -h, --help            help for lastfm
 
 Use "lastfm [command] --help" for more information about a command.
-`
+```
