@@ -1,17 +1,4 @@
-package lastfm
-
-const (
-	imageSmall      = "small"
-	imageMedium     = "medium"
-	imageLarge      = "large"
-	imageExtraLarge = "extralarge"
-	imageMega       = "mega"
-)
-
-type Image struct {
-	URL  string `json:"#text,omitempty"`
-	Size string `json:"size,omitempty"`
-}
+package models
 
 type Tag struct {
 	Name string `json:"name"`
