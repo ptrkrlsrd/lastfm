@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 Petter Karlsrud
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -30,10 +29,10 @@ var artistInfoCmd = &cobra.Command{
 		query := args[0]
 		artistInfo, err := client.GetArtistInfo(query)
 		if err != nil {
-			log.Fatal(err)
+			handleError(err)
 		}
 
-		fmt.Println(artistInfo)
+		fmt.Println(artistInfo.Summary())
 	},
 }
 
@@ -46,10 +45,10 @@ var albumInfoCmd = &cobra.Command{
 		artist, album := args[0], args[1]
 		albumInfo, err := client.GetAlbumInfo(artist, album)
 		if err != nil {
-			log.Fatal(err)
+			handleError(err)
 		}
 
-		fmt.Println(albumInfo)
+		fmt.Println(albumInfo.Summary())
 	},
 }
 

@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 Petter Karlsrud
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/spf13/cobra"
 )
 
-var (
-	limit = 10
-)
+var limit = 10
 
 // scrobblesCmd represents the scrobbles command
 var scrobblesCmd = &cobra.Command{
@@ -32,17 +29,16 @@ var scrobblesCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		username := args[0]
-		tracks, err := client.GetRecentTracks(username)
-
+		topTracks, err := client.GetRecentTracks(username)
 		if err != nil {
-			log.Fatal(err)
+			handleError(err)
 		}
 
-		if len(tracks) < limit {
-			limit = len(tracks)
+		if len(topTracks.Tracks) < limit {
+			limit = len(topTracks.Tracks)
 		}
 
-		for _, v := range tracks[:limit] {
+		for _, v := range topTracks.Tracks[:limit] {
 			fmt.Printf(v.ToString())
 		}
 	},

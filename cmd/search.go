@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 Petter Karlsrud
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,12 +31,17 @@ var searchCmd = &cobra.Command{
 
 		switch searchType {
 		case "artist":
-			a, _ := client.GetArtistInfo(query)
-			fmt.Println(a.Name, a.Tags.Tag)
+			artistInfo, err := client.GetArtistInfo(query)
+			if err != nil {
+				handleError(err)
+			}
+
+			fmt.Println(artistInfo.Name)
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(searchCmd)
+	// TODO: Implement this command
+	//rootCmd.AddCommand(searchCmd)
 }
