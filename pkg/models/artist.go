@@ -1,6 +1,8 @@
-package lastfm
+package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type Artist struct {
 	Name   string            `json:"name"`
@@ -11,10 +13,13 @@ type Artist struct {
 }
 
 func (artist *Artist) UnmarshalJSON(data []byte) error {
-	imgs := struct {
+	var imgs = struct {
 		Images []Image `json:"image,omitempty"`
 	}{}
-	err := json.Unmarshal(data, &imgs)
+
+	if err := json.Unmarshal(data, &imgs); err != nil {
+		return err
+	}
 
 	type Alias Artist
 	aux := &struct {
@@ -23,15 +28,17 @@ func (artist *Artist) UnmarshalJSON(data []byte) error {
 		Alias: (*Alias)(artist),
 	}
 
-	err = json.Unmarshal(data, &aux)
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
 
 	artist.Images = TransformImages(imgs.Images)
-	return err
+	return nil
 }
 
 type SimilarArtists struct {
 	Artists []Artist `json:"similar"`
-	Input   string   `json:"input,omitempty"`
+	Query   string   `json:"input,omitempty"`
 }
 
 type ArtistInfo struct {
@@ -53,32 +60,39 @@ type ArtistInfo struct {
 	Bio Bio `json:"bio"`
 }
 
-type ArtistInfoInput struct {
-	ArtistInfo ArtistInfo `json:"artist"`
-}
-
 func (u *ArtistInfo) UnmarshalJSON(data []byte) error {
 	type Alias ArtistInfo
 
-	imgs := struct {
+	var imgs = struct {
 		Images []Image `json:"image,omitempty"`
 	}{}
 
-	err := json.Unmarshal(data, &imgs)
+	if err := json.Unmarshal(data, &imgs); err != nil {
+		return nil
+	}
+
 	aux := &struct {
 		*Alias
 	}{
 		Alias: (*Alias)(u),
 	}
 
-	err = json.Unmarshal(data, &aux)
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
 	u.Images = TransformImages(imgs.Images)
-	return err
+	return nil
 }
 
 func TransformImages(images []Image) map[string]string {
 	var output = make(map[string]string)
-	keys := []string{imageSmall, imageMedium, imageLarge, imageExtraLarge, imageMega}
+	keys := []string{imageSmall,
+		imageMedium,
+		imageLarge,
+		imageExtraLarge,
+		imageMega}
+
 	for i, v := range images {
 		if i < len(keys) {
 			key := keys[i]
@@ -92,13 +106,4 @@ func TransformImages(images []Image) map[string]string {
 type SimpleArtist struct {
 	Name string `json:"#text"`
 	Mbid string `json:"mbid"`
-}
-
-type SimilarArtistsInput struct {
-	Data struct {
-		Artists []Artist `json:"artist"`
-		Input   struct {
-			Artist string `json:"artist"`
-		} `json:"@attr"`
-	} `json:"similarartists"`
 }

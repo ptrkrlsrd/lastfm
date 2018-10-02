@@ -1,4 +1,4 @@
-package lastfm
+package models
 
 import "fmt"
 
@@ -45,23 +45,6 @@ type RecentTrack struct {
 	Name       string `json:"name"`
 	Streamable string `json:"streamable"`
 	URL        string `json:"url"`
-}
-
-type RecentTracksInput struct {
-	RecentTracks RecentTracks `json:"recenttracks"`
-}
-
-type TopTracksInput struct {
-	Data struct {
-		Attr struct {
-			Page       string `json:"page"`
-			PerPage    string `json:"perPage"`
-			Total      string `json:"total"`
-			TotalPages string `json:"totalPages"`
-			User       string `json:"user"`
-		} `json:"@attr"`
-		Tracks []Track `json:"track"`
-	} `json:"toptracks"`
 }
 
 func (recentTrack RecentTrack) ToString() string {

@@ -1,6 +1,8 @@
-package lastfm
+package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type AlbumInfo struct {
 	Name      string            `json:"name"`
@@ -19,15 +21,17 @@ type AlbumInfo struct {
 	Wiki Bio `json:"wiki"`
 }
 
-// UnmarshalJSON Unmarsh
+// UnmarshalJSON UnmarshalJSON
 func (u *AlbumInfo) UnmarshalJSON(data []byte) error {
 	type Alias AlbumInfo
-	imgs := struct {
-		Info struct {
-			Images []Image `json:"image,omitempty"`
-		} `json:"album"`
+	var imgs = struct {
+		Images []Image `json:"image,omitempty"`
 	}{}
+
 	err := json.Unmarshal(data, &imgs)
+	if err != nil {
+		return err
+	}
 
 	aux := &struct {
 		*Alias
@@ -36,10 +40,15 @@ func (u *AlbumInfo) UnmarshalJSON(data []byte) error {
 	}
 
 	err = json.Unmarshal(data, &aux)
-	u.Images = TransformImages(imgs.Info.Images)
-	return err
+	if err != nil {
+		return err
+	}
+
+	u.Images = TransformImages(imgs.Images)
+	return nil
 }
 
+// SimpleAlbum ...
 type SimpleAlbum struct {
 	Name string `json:"#text"`
 	Mbid string `json:"mbid"`
