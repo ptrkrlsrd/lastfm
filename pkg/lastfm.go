@@ -13,14 +13,17 @@ const (
 	baseURL = "http://ws.audioscrobbler.com/2.0/?"
 )
 
+// Client ...
 type Client struct {
 	apiKey string
 }
 
+// NewClient ...
 func NewClient(apiKey string) Client {
 	return Client{apiKey: apiKey}
 }
 
+// GetSimilarArtists ...
 func (client *Client) GetSimilarArtists(query string) (similarArtists models.SimilarArtists, err error) {
 	var inModel input.SimilarArtists
 
@@ -43,6 +46,7 @@ func (client *Client) GetSimilarArtists(query string) (similarArtists models.Sim
 	return models.SimilarArtists{Artists: artists, Query: inputQuery}, nil
 }
 
+// GetArtistInfo ...
 func (client *Client) GetArtistInfo(query string) (artistInfo models.ArtistInfo, err error) {
 	var inModel input.ArtistInfo
 
@@ -61,6 +65,7 @@ func (client *Client) GetArtistInfo(query string) (artistInfo models.ArtistInfo,
 	return inModel.ArtistInfo, nil
 }
 
+// GetAlbumInfo ...
 func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo models.AlbumInfo, err error) {
 	var inModel input.AlbumInfo
 
@@ -79,6 +84,7 @@ func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo model
 	return inModel.AlbumInfo, nil
 }
 
+// GetTopTracks ...
 func (client *Client) GetTopTracks(user string) (tracks []models.Track, err error) {
 	var inModel input.TopTracks
 
@@ -98,6 +104,7 @@ func (client *Client) GetTopTracks(user string) (tracks []models.Track, err erro
 	return topTracksData.Tracks, nil
 }
 
+// GetRecentTracks ...
 func (client *Client) GetRecentTracks(user string) (tracks []models.RecentTrack, err error) {
 	var inModel input.RecentTracks
 
