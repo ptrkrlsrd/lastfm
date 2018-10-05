@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 Petter Karlsrud
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,13 +28,12 @@ var topCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		username := args[0]
 		top, err := client.GetTopTracks(username)
-
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		for i, v := range top {
-			fmt.Printf("%d) %s - %s\n", i+1, v.Artist.Name, v.Name)
+		for _, v := range top {
+			fmt.Println(v.ToString())
 		}
 	},
 }

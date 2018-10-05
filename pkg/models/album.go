@@ -2,16 +2,18 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
+// AlbumInfo ...
 type AlbumInfo struct {
-	Name      string            `json:"name"`
-	Artist    string            `json:"artist"`
-	Mbid      string            `json:"mbid"`
-	URL       string            `json:"url"`
-	Images    map[string]string `json:"images,omitempty"`
-	Listeners string            `json:"listeners"`
-	Playcount string            `json:"playcount"`
+	Name      string `json:"name"`
+	Artist    string `json:"artist"`
+	Mbid      string `json:"mbid"`
+	URL       string `json:"url"`
+	Images    Images `json:"images,omitempty"`
+	Listeners string `json:"listeners"`
+	Playcount string `json:"playcount"`
 	Tracks    struct {
 		Track []Track `json:"track"`
 	} `json:"tracks"`
@@ -22,30 +24,33 @@ type AlbumInfo struct {
 }
 
 // UnmarshalJSON UnmarshalJSON
-func (u *AlbumInfo) UnmarshalJSON(data []byte) error {
-	type Alias AlbumInfo
-	var imgs = struct {
+func (albumInfo *AlbumInfo) UnmarshalJSON(data []byte) error {
+	var imgs struct {
 		Images []Image `json:"image,omitempty"`
-	}{}
+	}
 
-	err := json.Unmarshal(data, &imgs)
-	if err != nil {
+	if err := json.Unmarshal(data, &imgs); err != nil {
 		return err
 	}
 
+	type Alias AlbumInfo
 	aux := &struct {
 		*Alias
 	}{
-		Alias: (*Alias)(u),
+		Alias: (*Alias)(albumInfo),
 	}
 
-	err = json.Unmarshal(data, &aux)
-	if err != nil {
+	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
 
-	u.Images = TransformImages(imgs.Images)
+	albumInfo.Images.TransformImages(imgs.Images)
 	return nil
+}
+
+// Summary ...
+func (albumInfo *AlbumInfo) Summary() string {
+	return fmt.Sprintf("Bio:\n\n%s", albumInfo.Wiki.Content)
 }
 
 // SimpleAlbum ...
