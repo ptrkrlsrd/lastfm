@@ -4,18 +4,20 @@ import (
 	"encoding/json"
 )
 
+// Artist ...
 type Artist struct {
-	Name   string            `json:"name"`
-	Mbid   string            `json:"mbid"`
-	Match  string            `json:"match,omitempty"`
-	URL    string            `json:"url"`
-	Images map[string]string `json:"images,omitempty"`
+	Name   string `json:"name"`
+	Mbid   string `json:"mbid"`
+	Match  string `json:"match,omitempty"`
+	URL    string `json:"url"`
+	Images Images `json:"images,omitempty"`
 }
 
+// UnmarshalJSON ...
 func (artist *Artist) UnmarshalJSON(data []byte) error {
-	var imgs = struct {
+	var imgs struct {
 		Images []Image `json:"image,omitempty"`
-	}{}
+	}
 
 	if err := json.Unmarshal(data, &imgs); err != nil {
 		return err
@@ -32,59 +34,65 @@ func (artist *Artist) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	artist.Images = TransformImages(imgs.Images)
+	artist.Images.TransformImages(imgs.Images)
 	return nil
 }
 
+// SimilarArtists ...
 type SimilarArtists struct {
 	Artists []Artist `json:"similar"`
 	Query   string   `json:"input,omitempty"`
 }
 
+// ArtistInfo ..
 type ArtistInfo struct {
-	Name   string            `json:"name"`
-	Mbid   string            `json:"mbid"`
-	URL    string            `json:"url"`
-	Images map[string]string `json:"images,omitempty"`
-	Ontour string            `json:"ontour"`
-	Stats  struct {
-		Listeners string `json:"listeners"`
-		Playcount string `json:"playcount"`
-	} `json:"stats"`
+	Name    string `json:"name"`
+	Mbid    string `json:"mbid"`
+	URL     string `json:"url"`
+	Images  Images `json:"images,omitempty"`
+	Ontour  string `json:"ontour"`
+	Stats   Stats  `json:"stats"`
 	Similar struct {
 		Artists []Artist `json:"artist"`
 	} `json:"similar"`
-	Tags struct {
-		Tag []Tag `json:"tag"`
-	} `json:"tags"`
-	Bio Bio `json:"bio"`
+	Tags Tags `json:"tags"`
+	Bio  Bio  `json:"bio"`
 }
 
-func (u *ArtistInfo) UnmarshalJSON(data []byte) error {
-	type Alias ArtistInfo
+// Summary ...
+func (artistInfo *ArtistInfo) Summary() string {
+	bioString := "Bio:\n\n" + artistInfo.Bio.Content + "\n"
+	tagsString := "Tags:\n\n" + artistInfo.Tags.ToString("\n")
 
-	var imgs = struct {
+	return bioString + tagsString
+}
+
+// UnmarshalJSON ...
+func (artistInfo *ArtistInfo) UnmarshalJSON(data []byte) error {
+	var imgs struct {
 		Images []Image `json:"image,omitempty"`
-	}{}
+	}
 
 	if err := json.Unmarshal(data, &imgs); err != nil {
 		return nil
 	}
 
+	type Alias ArtistInfo
 	aux := &struct {
 		*Alias
 	}{
-		Alias: (*Alias)(u),
+		Alias: (*Alias)(artistInfo),
 	}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
 
-	u.Images = TransformImages(imgs.Images)
+	artistInfo.Images.TransformImages(imgs.Images)
 	return nil
 }
 
+// TransformImages ...
 func TransformImages(images []Image) map[string]string {
 	var output = make(map[string]string)
 	keys := []string{imageSmall,
@@ -103,6 +111,7 @@ func TransformImages(images []Image) map[string]string {
 	return output
 }
 
+// SimpleArtist ...
 type SimpleArtist struct {
 	Name string `json:"#text"`
 	Mbid string `json:"mbid"`

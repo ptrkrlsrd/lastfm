@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ptrkrlsrd/lastfm/pkg/input"
 	"github.com/ptrkrlsrd/lastfm/pkg/models"
 	"github.com/ptrkrlsrd/utilities/pkg/unet"
 )
@@ -13,16 +12,26 @@ const (
 	baseURL = "http://ws.audioscrobbler.com/2.0/?"
 )
 
+// Client ...
 type Client struct {
 	apiKey string
 }
 
+// NewClient ...
 func NewClient(apiKey string) Client {
 	return Client{apiKey: apiKey}
 }
 
+// GetSimilarArtists ...
 func (client *Client) GetSimilarArtists(query string) (similarArtists models.SimilarArtists, err error) {
-	var inModel input.SimilarArtists
+	var inModel struct {
+		Data struct {
+			Artists []models.Artist `json:"artist"`
+			Query   struct {
+				Artist string
+			} `json:"@attr"`
+		} `json:"similarartists"`
+	}
 
 	url := fmt.Sprintf("%smethod=artist.getsimilar&artist=%s&api_key=%s&limit=%d&format=json",
 		baseURL, query, client.apiKey, 30)
@@ -43,10 +52,9 @@ func (client *Client) GetSimilarArtists(query string) (similarArtists models.Sim
 	return models.SimilarArtists{Artists: artists, Query: inputQuery}, nil
 }
 
+// GetArtistInfo ...
 func (client *Client) GetArtistInfo(query string) (artistInfo models.ArtistInfo, err error) {
-	var inModel input.ArtistInfo
-
-	url := fmt.Sprintf("%smethod=artist.getinfo&artist=%s&api_key=%s&format=json",
+	var url = fmt.Sprintf("%smethod=artist.getinfo&artist=%s&api_key=%s&format=json",
 		baseURL, query, client.apiKey)
 
 	data, err := unet.Fetch(url)
@@ -54,15 +62,22 @@ func (client *Client) GetArtistInfo(query string) (artistInfo models.ArtistInfo,
 		return artistInfo, err
 	}
 
+	var inModel struct {
+		Info models.ArtistInfo `json:"artist"`
+	}
+
 	if err = json.Unmarshal(data, &inModel); err != nil {
 		return artistInfo, err
 	}
 
-	return inModel.ArtistInfo, nil
+	return inModel.Info, nil
 }
 
+// GetAlbumInfo ...
 func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo models.AlbumInfo, err error) {
-	var inModel input.AlbumInfo
+	var inModel struct {
+		Info models.AlbumInfo `json:"album"`
+	}
 
 	url := fmt.Sprintf("%smethod=album.getinfo&artist=%s&album=%s&api_key=%s&format=json",
 		baseURL, artist, album, client.apiKey)
@@ -76,11 +91,14 @@ func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo model
 		return albumInfo, err
 	}
 
-	return inModel.AlbumInfo, nil
+	return inModel.Info, nil
 }
 
-func (client *Client) GetTopTracks(user string) (tracks []models.Track, err error) {
-	var inModel input.TopTracks
+// GetTopTracks ...
+func (client *Client) GetTopTracks(user string) (tracks []models.RecentTrack, err error) {
+	var inModel struct {
+		Tracks models.TopTracks `json:"toptracks"`
+	}
 
 	url := fmt.Sprintf("%smethod=user.gettoptracks&user=%s&api_key=%s&format=json",
 		baseURL, user, client.apiKey)
@@ -94,12 +112,15 @@ func (client *Client) GetTopTracks(user string) (tracks []models.Track, err erro
 		return tracks, err
 	}
 
-	topTracksData := inModel.Data
+	topTracksData := inModel.Tracks
 	return topTracksData.Tracks, nil
 }
 
-func (client *Client) GetRecentTracks(user string) (tracks []models.RecentTrack, err error) {
-	var inModel input.RecentTracks
+// GetRecentTracks ...
+func (client *Client) GetRecentTracks(user string) (tracks models.TopTracks, err error) {
+	var inModel struct {
+		Tracks models.TopTracks `json:"recentTracks"`
+	}
 
 	url := fmt.Sprintf("%smethod=user.getrecenttracks&user=%s&api_key=%s&format=json",
 		baseURL, user, client.apiKey)
@@ -113,6 +134,10 @@ func (client *Client) GetRecentTracks(user string) (tracks []models.RecentTrack,
 		return tracks, err
 	}
 
-	recentTracks := inModel.RecentTracks
-	return recentTracks.Tracks, nil
+	recentTracks := inModel.Tracks
+	if len(recentTracks.Tracks) == 0 {
+		return tracks, fmt.Errorf("no results")
+	}
+
+	return recentTracks, nil
 }
