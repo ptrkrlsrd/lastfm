@@ -24,7 +24,7 @@ func NewClient(apiKey string) Client {
 
 // GetSimilarArtists ...
 func (client *Client) GetSimilarArtists(query string) (similarArtists models.SimilarArtists, err error) {
-	var inModel struct {
+	var lastfmAPIResponse struct {
 		Data struct {
 			Artists []models.Artist `json:"artist"`
 			Query   struct {
@@ -41,11 +41,11 @@ func (client *Client) GetSimilarArtists(query string) (similarArtists models.Sim
 		return similarArtists, err
 	}
 
-	if err := json.Unmarshal(data, &inModel); err != nil {
+	if err := json.Unmarshal(data, &lastfmAPIResponse); err != nil {
 		return similarArtists, err
 	}
 
-	similarData := inModel.Data
+	similarData := lastfmAPIResponse.Data
 	artists := similarData.Artists
 	inputQuery := similarData.Query.Artist
 
@@ -62,20 +62,20 @@ func (client *Client) GetArtistInfo(query string) (artistInfo models.ArtistInfo,
 		return artistInfo, err
 	}
 
-	var inModel struct {
+	var lastfmAPIResponse struct {
 		Info models.ArtistInfo `json:"artist"`
 	}
 
-	if err = json.Unmarshal(data, &inModel); err != nil {
+	if err = json.Unmarshal(data, &lastfmAPIResponse); err != nil {
 		return artistInfo, err
 	}
 
-	return inModel.Info, nil
+	return lastfmAPIResponse.Info, nil
 }
 
 // GetAlbumInfo ...
 func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo models.AlbumInfo, err error) {
-	var inModel struct {
+	var lastfmAPIResponse struct {
 		Info models.AlbumInfo `json:"album"`
 	}
 
@@ -87,16 +87,37 @@ func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo model
 		return albumInfo, err
 	}
 
-	if err = json.Unmarshal(data, &inModel); err != nil {
+	if err = json.Unmarshal(data, &lastfmAPIResponse); err != nil {
 		return albumInfo, err
 	}
 
-	return inModel.Info, nil
+	return lastfmAPIResponse.Info, nil
+}
+
+// GetAlbumInfo ...
+func (client *Client) GetAlbumInfoByID(id string) (albumInfo models.AlbumInfo, err error) {
+	var lastfmAPIResponse struct {
+		Info models.AlbumInfo `json:"album"`
+	}
+
+	url := fmt.Sprintf("%smethod=album.getinfo&mbid=%s&api_key=%s&format=json",
+		baseURL, id, client.apiKey)
+
+	data, err := unet.Fetch(url)
+	if err != nil {
+		return albumInfo, err
+	}
+
+	if err = json.Unmarshal(data, &lastfmAPIResponse); err != nil {
+		return albumInfo, err
+	}
+
+	return lastfmAPIResponse.Info, nil
 }
 
 // GetTopTracks ...
 func (client *Client) GetTopTracks(user string) (tracks []models.RecentTrack, err error) {
-	var inModel struct {
+	var lastfmAPIResponse struct {
 		Tracks models.TopTracks `json:"toptracks"`
 	}
 
@@ -108,17 +129,17 @@ func (client *Client) GetTopTracks(user string) (tracks []models.RecentTrack, er
 		return tracks, err
 	}
 
-	if err = json.Unmarshal(data, &inModel); err != nil {
+	if err = json.Unmarshal(data, &lastfmAPIResponse); err != nil {
 		return tracks, err
 	}
 
-	topTracksData := inModel.Tracks
+	topTracksData := lastfmAPIResponse.Tracks
 	return topTracksData.Tracks, nil
 }
 
 // GetRecentTracks ...
 func (client *Client) GetRecentTracks(user string) (tracks models.TopTracks, err error) {
-	var inModel struct {
+	var lastfmAPIResponse struct {
 		Tracks models.TopTracks `json:"recentTracks"`
 	}
 
@@ -130,11 +151,11 @@ func (client *Client) GetRecentTracks(user string) (tracks models.TopTracks, err
 		return tracks, err
 	}
 
-	if err = json.Unmarshal(data, &inModel); err != nil {
+	if err = json.Unmarshal(data, &lastfmAPIResponse); err != nil {
 		return tracks, err
 	}
 
-	recentTracks := inModel.Tracks
+	recentTracks := lastfmAPIResponse.Tracks
 	if len(recentTracks.Tracks) == 0 {
 		return tracks, fmt.Errorf("no results")
 	}
