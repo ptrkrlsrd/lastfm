@@ -25,14 +25,6 @@ type AlbumInfo struct {
 
 // UnmarshalJSON UnmarshalJSON
 func (albumInfo *AlbumInfo) UnmarshalJSON(data []byte) error {
-	var imgs struct {
-		Images []Image `json:"image,omitempty"`
-	}
-
-	if err := json.Unmarshal(data, &imgs); err != nil {
-		return err
-	}
-
 	type Alias AlbumInfo
 	aux := &struct {
 		*Alias
@@ -44,7 +36,18 @@ func (albumInfo *AlbumInfo) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	albumInfo.Images.TransformImages(imgs.Images)
+	if albumInfo.Images == nil {
+		var imgs struct {
+			Images []Image `json:"image,omitempty"`
+		}
+
+		if err := json.Unmarshal(data, &imgs); err != nil {
+			return err
+		}
+
+		albumInfo.Images.TransformImages(imgs.Images)
+	}
+
 	return nil
 }
 
