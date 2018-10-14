@@ -36,3 +36,21 @@ func (images *Images) TransformImages(imageSlice []Image) {
 
 	*images = output
 }
+
+// GetLargestImage ..
+func (images Images) GetLargestImage() string {
+	imgURL := images[imageExtraLarge]
+	if imgURL != "" {
+		return imgURL
+	}
+
+	sizes := []string{imageMega, imageExtraLarge, imageLarge, imageMedium}
+
+	for _, v := range sizes {
+		if images[v] != "" {
+			return images[v]
+		}
+	}
+
+	return imgURL
+}
