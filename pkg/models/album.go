@@ -56,6 +56,20 @@ func (albumInfo *AlbumInfo) Summary() string {
 	return fmt.Sprintf("Bio:\n\n%s", albumInfo.Wiki.Content)
 }
 
+func (albumInfo *AlbumInfo) GetBiggestImage() string {
+	imgURL := albumInfo.Images[imageExtraLarge]
+	sizes := []string{imageMega, imageExtraLarge, imageLarge, imageMedium}
+
+	for _, v := range sizes {
+		if albumInfo.Images[v] != "" {
+			imgURL = albumInfo.Images[v]
+			break
+		}
+	}
+
+	return imgURL
+}
+
 // SimpleAlbum ...
 type SimpleAlbum struct {
 	Name string `json:"#text"`
