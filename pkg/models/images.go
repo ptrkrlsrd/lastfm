@@ -15,42 +15,28 @@ type Image struct {
 }
 
 // Images ...
-type Images map[string]string
+type Images struct {
+	Mega       string `json:"mega"`
+	ExtraLarge string `json:"extralarge"`
+	Large      string `json:"large"`
+	Medium     string `json:"medium"`
+	Small      string `json:"small"`
+}
 
 // TransformImages ...
 func (images *Images) TransformImages(imageSlice []Image) {
-	var output = make(Images)
-
-	keys := []string{imageSmall,
-		imageMedium,
-		imageLarge,
-		imageExtraLarge,
-		imageMega}
-
-	for i, v := range imageSlice {
-		if i < len(keys) {
-			key := keys[i]
-			output[key] = v.URL
+	for _, v := range imageSlice {
+		switch v.Size {
+		case imageMega:
+			images.Mega = v.URL
+		case imageExtraLarge:
+			images.ExtraLarge = v.URL
+		case imageLarge:
+			images.Large = v.URL
+		case imageMedium:
+			images.Medium = v.URL
+		case imageSmall:
+			images.Small = v.URL
 		}
 	}
-
-	*images = output
-}
-
-// GetLargestImage ..
-func (images Images) GetLargestImage() string {
-	imgURL := images[imageExtraLarge]
-	if imgURL != "" {
-		return imgURL
-	}
-
-	sizes := []string{imageMega, imageExtraLarge, imageLarge, imageMedium}
-
-	for _, v := range sizes {
-		if images[v] != "" {
-			return images[v]
-		}
-	}
-
-	return imgURL
 }

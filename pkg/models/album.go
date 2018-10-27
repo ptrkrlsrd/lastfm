@@ -36,17 +36,15 @@ func (albumInfo *AlbumInfo) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	if albumInfo.Images == nil {
-		var imgs struct {
-			Images []Image `json:"image,omitempty"`
-		}
-
-		if err := json.Unmarshal(data, &imgs); err != nil {
-			return err
-		}
-
-		albumInfo.Images.TransformImages(imgs.Images)
+	var imgs struct {
+		Images []Image `json:"image,omitempty"`
 	}
+
+	if err := json.Unmarshal(data, &imgs); err != nil {
+		return err
+	}
+
+	albumInfo.Images.TransformImages(imgs.Images)
 
 	return nil
 }
