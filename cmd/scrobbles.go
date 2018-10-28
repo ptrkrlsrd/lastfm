@@ -20,8 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var limit = 10
-
 // scrobblesCmd represents the scrobbles command
 var scrobblesCmd = &cobra.Command{
 	Use:   "scrobbles",
@@ -39,7 +37,7 @@ var scrobblesCmd = &cobra.Command{
 		}
 
 		for _, v := range topTracks.Tracks[:limit] {
-			fmt.Printf(v.ToString())
+			fmt.Println(v.ToString())
 		}
 	},
 }

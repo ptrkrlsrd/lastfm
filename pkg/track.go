@@ -1,4 +1,4 @@
-package models
+package lastfm
 
 import (
 	"fmt"
@@ -19,8 +19,13 @@ type Track struct {
 	URL        string      `json:"url"`
 }
 
-// TopTracks ...
-type TopTracks struct {
+// ToString ..
+func (track *Track) ToString() string {
+	return fmt.Sprintf("%s: %s", track.Artist.Name, track.Name)
+}
+
+// RecentTracks RecentTracks
+type RecentTracks struct {
 	Attr struct {
 		Page       string `json:"page"`
 		PerPage    string `json:"perPage"`
@@ -52,5 +57,5 @@ func (recentTrack RecentTrack) ToString() string {
 	if date == "" {
 		date = "playing now"
 	}
-	return fmt.Sprintf("%s) %s: %s\n", date, recentTrack.Artist.Name, recentTrack.Name)
+	return fmt.Sprintf("%s) %s: %s", date, recentTrack.Artist.Name, recentTrack.Name)
 }

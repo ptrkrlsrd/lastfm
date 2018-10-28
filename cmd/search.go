@@ -15,33 +15,39 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
-// searchCmd represents the search command
+// searchCmd ...
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search the API",
+}
+
+// artistSearchCmd ...
+var artistSearchCmd = &cobra.Command{
+	Use:   "artist",
+	Short: "Search the API for an artist",
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		_ = args[0]
+	},
+}
+
+// albumSearchCmd ...
+var albumSearchCmd = &cobra.Command{
+	Use:   "album",
+	Short: "Search the API for an album by artist and album name",
 	Args:  cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		searchType := args[0]
-		query := args[1]
-
-		switch searchType {
-		case "artist":
-			artistInfo, err := client.GetArtistInfo(query)
-			if err != nil {
-				handleError(err)
-			}
-
-			fmt.Println(artistInfo.Name)
-		}
+		_, _ = args[0], args[1]
 	},
 }
 
 func init() {
 	// TODO: Implement this command
 	//rootCmd.AddCommand(searchCmd)
+	searchCmd.AddCommand(artistSearchCmd)
+	searchCmd.AddCommand(albumSearchCmd)
+	rootCmd.AddCommand(searchCmd)
 }

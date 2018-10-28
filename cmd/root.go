@@ -27,6 +27,7 @@ import (
 var (
 	cfgFile string
 	client  lastfm.Client
+	limit   = 10
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -54,6 +55,7 @@ func init() {
 	if apiKey == "" {
 		apiKey = viper.GetString("LASTFM_API")
 	}
+
 	client = lastfm.NewClient(apiKey)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.lastfm.yml)")

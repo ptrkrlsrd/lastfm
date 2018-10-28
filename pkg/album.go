@@ -1,4 +1,4 @@
-package models
+package lastfm
 
 import (
 	"encoding/json"

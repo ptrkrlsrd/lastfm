@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ptrkrlsrd/lastfm/pkg/models"
 	"github.com/ptrkrlsrd/utilities/pkg/unet"
 )
 
@@ -23,10 +22,10 @@ func NewClient(apiKey string) Client {
 }
 
 // GetSimilarArtists ...
-func (client *Client) GetSimilarArtists(query string) (similarArtists models.SimilarArtists, err error) {
+func (client *Client) GetSimilarArtists(query string) (similarArtists SimilarArtists, err error) {
 	var lastfmAPIResponse struct {
 		Data struct {
-			Artists []models.Artist `json:"artist"`
+			Artists []Artist `json:"artist"`
 			Query   struct {
 				Artist string
 			} `json:"@attr"`
@@ -49,11 +48,11 @@ func (client *Client) GetSimilarArtists(query string) (similarArtists models.Sim
 	artists := similarData.Artists
 	inputQuery := similarData.Query.Artist
 
-	return models.SimilarArtists{Artists: artists, Query: inputQuery}, nil
+	return SimilarArtists{Artists: artists, Query: inputQuery}, nil
 }
 
 // GetArtistInfo ...
-func (client *Client) GetArtistInfo(query string) (artistInfo models.ArtistInfo, err error) {
+func (client *Client) GetArtistInfo(query string) (artistInfo ArtistInfo, err error) {
 	var url = fmt.Sprintf("%smethod=artist.getinfo&artist=%s&api_key=%s&format=json",
 		baseURL, query, client.apiKey)
 
@@ -63,7 +62,7 @@ func (client *Client) GetArtistInfo(query string) (artistInfo models.ArtistInfo,
 	}
 
 	var lastfmAPIResponse struct {
-		Info models.ArtistInfo `json:"artist"`
+		Info ArtistInfo `json:"artist"`
 	}
 
 	if err = json.Unmarshal(data, &lastfmAPIResponse); err != nil {
@@ -74,9 +73,9 @@ func (client *Client) GetArtistInfo(query string) (artistInfo models.ArtistInfo,
 }
 
 // GetAlbumInfo ...
-func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo models.AlbumInfo, err error) {
+func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo AlbumInfo, err error) {
 	var lastfmAPIResponse struct {
-		Info models.AlbumInfo `json:"album"`
+		Info AlbumInfo `json:"album"`
 	}
 
 	url := fmt.Sprintf("%smethod=album.getinfo&artist=%s&album=%s&api_key=%s&format=json",
@@ -95,9 +94,9 @@ func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo model
 }
 
 // GetAlbumInfo ...
-func (client *Client) GetAlbumInfoByID(id string) (albumInfo models.AlbumInfo, err error) {
+func (client *Client) GetAlbumInfoByID(id string) (albumInfo AlbumInfo, err error) {
 	var lastfmAPIResponse struct {
-		Info models.AlbumInfo `json:"album"`
+		Info AlbumInfo `json:"album"`
 	}
 
 	url := fmt.Sprintf("%smethod=album.getinfo&mbid=%s&api_key=%s&format=json",
@@ -116,9 +115,9 @@ func (client *Client) GetAlbumInfoByID(id string) (albumInfo models.AlbumInfo, e
 }
 
 // GetTopTracks ...
-func (client *Client) GetTopTracks(user string) (tracks []models.RecentTrack, err error) {
+func (client *Client) GetTopTracks(user string) (tracks []RecentTrack, err error) {
 	var lastfmAPIResponse struct {
-		Tracks models.TopTracks `json:"toptracks"`
+		Tracks RecentTracks `json:"toptracks"`
 	}
 
 	url := fmt.Sprintf("%smethod=user.gettoptracks&user=%s&api_key=%s&format=json",
@@ -138,9 +137,9 @@ func (client *Client) GetTopTracks(user string) (tracks []models.RecentTrack, er
 }
 
 // GetRecentTracks ...
-func (client *Client) GetRecentTracks(user string) (tracks models.TopTracks, err error) {
+func (client *Client) GetRecentTracks(user string) (tracks RecentTracks, err error) {
 	var lastfmAPIResponse struct {
-		Tracks models.TopTracks `json:"recentTracks"`
+		Tracks RecentTracks `json:"recentTracks"`
 	}
 
 	url := fmt.Sprintf("%smethod=user.getrecenttracks&user=%s&api_key=%s&format=json",
