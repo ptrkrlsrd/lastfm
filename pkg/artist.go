@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-// Artist ...
+// Artist An artist
 type Artist struct {
 	Name   string `json:"name"`
 	Mbid   string `json:"mbid"`
@@ -13,7 +13,7 @@ type Artist struct {
 	Images Images `json:"images,omitempty"`
 }
 
-// UnmarshalJSON ...
+// UnmarshalJSON Unmarshal JSON and transform the images correctly
 func (artist *Artist) UnmarshalJSON(data []byte) error {
 	var imgs struct {
 		Images []Image `json:"image,omitempty"`
@@ -38,13 +38,13 @@ func (artist *Artist) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// SimilarArtists ...
+// SimilarArtists Similar artists and the users search query
 type SimilarArtists struct {
 	Artists []Artist `json:"similar"`
 	Query   string   `json:"input,omitempty"`
 }
 
-// ArtistInfo ..
+// ArtistInfo Artist info
 type ArtistInfo struct {
 	Name    string `json:"name"`
 	Mbid    string `json:"mbid"`
@@ -90,25 +90,6 @@ func (artistInfo *ArtistInfo) UnmarshalJSON(data []byte) error {
 
 	artistInfo.Images.TransformImages(imgs.Images)
 	return nil
-}
-
-// TransformImages ...
-func TransformImages(images []Image) map[string]string {
-	var output = make(map[string]string)
-	keys := []string{imageSmall,
-		imageMedium,
-		imageLarge,
-		imageExtraLarge,
-		imageMega}
-
-	for i, v := range images {
-		if i < len(keys) {
-			key := keys[i]
-			output[key] = v.URL
-		}
-	}
-
-	return output
 }
 
 // SimpleArtist ...
