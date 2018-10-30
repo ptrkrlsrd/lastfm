@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// AlbumInfo ...
+// AlbumInfo Info about an album
 type AlbumInfo struct {
 	Name      string `json:"name"`
 	Artist    string `json:"artist"`
@@ -23,7 +23,7 @@ type AlbumInfo struct {
 	Wiki Bio `json:"wiki"`
 }
 
-// UnmarshalJSON UnmarshalJSON
+// UnmarshalJSON Custom unmarshal of JSON which transforms images correctly 
 func (albumInfo *AlbumInfo) UnmarshalJSON(data []byte) error {
 	type Alias AlbumInfo
 	aux := &struct {
@@ -54,7 +54,7 @@ func (albumInfo *AlbumInfo) Summary() string {
 	return fmt.Sprintf("Bio:\n\n%s", albumInfo.Wiki.Content)
 }
 
-// SimpleAlbum ...
+// SimpleAlbum A simple album struct containing just a Name and Mbid
 type SimpleAlbum struct {
 	Name string `json:"#text"`
 	Mbid string `json:"mbid"`
