@@ -1,11 +1,11 @@
 package lastfm
 
 const (
-	imageSmall      = "small"
-	imageMedium     = "medium"
-	imageLarge      = "large"
-	imageExtraLarge = "extralarge"
-	imageMega       = "mega"
+	imageSmall      = "small"      // imageSmall The smallest image size
+	imageMedium     = "medium"     // imageMedium A medium image size
+	imageLarge      = "large"      // imageLarge A large image size
+	imageExtraLarge = "extralarge" // imageExtraLarge A extra large image size
+	imageMega       = "mega"       // imageMega The biggest image size
 )
 
 // Image ..
@@ -23,7 +23,7 @@ type Images struct {
 	Small      string `json:"small"`
 }
 
-// TransformImages ...
+// TransformImages Transform images from the way LastFM handles images to the way handled here
 func (images *Images) TransformImages(imageSlice []Image) {
 	for _, v := range imageSlice {
 		switch v.Size {
