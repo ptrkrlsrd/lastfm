@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ptrkrlsrd/utilities/pkg/unet"
+	"github.com/ptrkrlsrd/utilities/unet"
 )
 
 const (
