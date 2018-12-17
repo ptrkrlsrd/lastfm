@@ -54,8 +54,10 @@ type RecentTrack struct {
 // ToString ...
 func (recentTrack RecentTrack) ToString() string {
 	date := recentTrack.Date.Text
+	format := "%s: %s"
 	if date == "" {
-		date = "playing now"
+		date = "now"
 	}
-	return fmt.Sprintf("%s) %s: %s", date, recentTrack.Artist.Name, recentTrack.Name)
+
+	return fmt.Sprintf(format, recentTrack.Artist.Name, recentTrack.Name)
 }

@@ -32,8 +32,8 @@ func (client *Client) GetSimilarArtists(query string) (similarArtists SimilarArt
 		} `json:"similarartists"`
 	}
 
-	url := fmt.Sprintf("%smethod=artist.getsimilar&artist=%s&api_key=%s&limit=%d&format=json",
-		baseURL, query, client.apiKey, 30)
+	urlFormat := "%smethod=artist.getsimilar&artist=%s&api_key=%s&limit=%d&format=json"
+	url := fmt.Sprintf(urlFormat, baseURL, query, client.apiKey, 30)
 
 	data, err := unet.Fetch(url)
 	if err != nil {
@@ -53,8 +53,8 @@ func (client *Client) GetSimilarArtists(query string) (similarArtists SimilarArt
 
 // GetArtistInfo ...
 func (client *Client) GetArtistInfo(query string) (artistInfo ArtistInfo, err error) {
-	var url = fmt.Sprintf("%smethod=artist.getinfo&artist=%s&api_key=%s&format=json",
-		baseURL, query, client.apiKey)
+	urlFormat := "%smethod=artist.getinfo&artist=%s&api_key=%s&format=json"
+	var url = fmt.Sprintf(urlFormat, baseURL, query, client.apiKey)
 
 	data, err := unet.Fetch(url)
 	if err != nil {
@@ -77,8 +77,8 @@ func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo Album
 	var lastfmAPIResponse struct {
 		Info AlbumInfo `json:"album"`
 	}
-
-	url := fmt.Sprintf("%smethod=album.getinfo&artist=%s&album=%s&api_key=%s&format=json",
+	urlFormat := "%smethod=album.getinfo&artist=%s&album=%s&api_key=%s&format=json"
+	url := fmt.Sprintf(urlFormat,
 		baseURL, artist, album, client.apiKey)
 
 	data, err := unet.Fetch(url)
@@ -93,13 +93,14 @@ func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo Album
 	return lastfmAPIResponse.Info, nil
 }
 
-// GetAlbumInfo ...
+// GetAlbumInfoByID ...
 func (client *Client) GetAlbumInfoByID(id string) (albumInfo AlbumInfo, err error) {
 	var lastfmAPIResponse struct {
 		Info AlbumInfo `json:"album"`
 	}
 
-	url := fmt.Sprintf("%smethod=album.getinfo&mbid=%s&api_key=%s&format=json",
+	urlFormat := "%smethod=album.getinfo&mbid=%s&api_key=%s&format=json"
+	url := fmt.Sprintf(urlFormat,
 		baseURL, id, client.apiKey)
 
 	data, err := unet.Fetch(url)
@@ -120,7 +121,8 @@ func (client *Client) GetTopTracks(user string) (tracks []RecentTrack, err error
 		Tracks RecentTracks `json:"toptracks"`
 	}
 
-	url := fmt.Sprintf("%smethod=user.gettoptracks&user=%s&api_key=%s&format=json",
+	urlFormat := "%smethod=user.gettoptracks&user=%s&api_key=%s&format=json"
+	url := fmt.Sprintf(urlFormat,
 		baseURL, user, client.apiKey)
 
 	data, err := unet.Fetch(url)
@@ -142,7 +144,8 @@ func (client *Client) GetRecentTracks(user string) (tracks RecentTracks, err err
 		Tracks RecentTracks `json:"recentTracks"`
 	}
 
-	url := fmt.Sprintf("%smethod=user.getrecenttracks&user=%s&api_key=%s&format=json",
+	urlFormat := "%smethod=user.getrecenttracks&user=%s&api_key=%s&format=json"
+	url := fmt.Sprintf(urlFormat,
 		baseURL, user, client.apiKey)
 
 	data, err := unet.Fetch(url)
