@@ -17,6 +17,6 @@ func NewClient(apiKey string) Client {
 }
 
 func generateURL(method string, query string, key string) string {
-	urlFormat := "%smethod=%s&%s&api_key=%s&format=json"
+	urlFormat := "%smethod=%s&%s&api_key=%s&format=json&autocorrect=1"
 	return fmt.Sprintf(urlFormat, baseURL, method, query, key)
 }

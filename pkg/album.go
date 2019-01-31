@@ -119,8 +119,8 @@ type SimpleAlbum struct {
 func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo AlbumInfo, err error) {
 	var albumInfoResponse AlbumInfoResponse
 	url := generateURL("album.getinfo", fmt.Sprintf("artist=%s&album=%s", artist, album), client.apiKey)
-
 	data, err := unet.Fetch(url)
+
 	if err != nil {
 		return albumInfo, err
 	}
