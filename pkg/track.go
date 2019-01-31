@@ -1,7 +1,10 @@
 package lastfm
 
 import (
+	"encoding/json"
 	"fmt"
+
+	"github.com/ptrkrlsrd/utilities/unet"
 )
 
 // Track ...
@@ -60,4 +63,48 @@ func (recentTrack RecentTrack) ToString() string {
 	}
 
 	return fmt.Sprintf(format, recentTrack.Artist.Name, recentTrack.Name)
+}
+
+// GetTopTracks ...
+func (client *Client) GetTopTracks(user string) (tracks []RecentTrack, err error) {
+	var lastfmAPIResponse struct {
+		Tracks RecentTracks `json:"toptracks"`
+	}
+
+	url := generateURL("user.gettoptracks", fmt.Sprintf("user=%s", user), client.apiKey)
+	data, err := unet.Fetch(url)
+	if err != nil {
+		return tracks, err
+	}
+
+	if err = json.Unmarshal(data, &lastfmAPIResponse); err != nil {
+		return tracks, err
+	}
+
+	topTracksData := lastfmAPIResponse.Tracks
+	return topTracksData.Tracks, nil
+}
+
+// GetRecentTracks ...
+func (client *Client) GetRecentTracks(user string) (tracks RecentTracks, err error) {
+	var lastfmAPIResponse struct {
+		Tracks RecentTracks `json:"recentTracks"`
+	}
+
+	url := generateURL("user.getrecenttracks", fmt.Sprintf("user=%s", user), client.apiKey)
+	data, err := unet.Fetch(url)
+	if err != nil {
+		return tracks, err
+	}
+
+	if err = json.Unmarshal(data, &lastfmAPIResponse); err != nil {
+		return tracks, err
+	}
+
+	recentTracks := lastfmAPIResponse.Tracks
+	if len(recentTracks.Tracks) == 0 {
+		return tracks, fmt.Errorf("no results")
+	}
+
+	return recentTracks, nil
 }

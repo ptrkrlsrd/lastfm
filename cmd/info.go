@@ -39,7 +39,7 @@ var artistInfoCmd = &cobra.Command{
 // infoCmd represents the info command
 var albumInfoCmd = &cobra.Command{
 	Use:   "album",
-	Short: "Get info about an album",
+	Short: "Get info about an album. Usage: lastfm info album \"artist\" \"album\"",
 	Args:  cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		artist, album := args[0], args[1]
