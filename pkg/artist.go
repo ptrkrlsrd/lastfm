@@ -62,12 +62,12 @@ type ArtistInfo struct {
 	Bio  Bio  `json:"bio"`
 }
 
-// Summary ...
+// Summary gives a summary of an ArtistInfo struct
 func (artistInfo *ArtistInfo) Summary() string {
-	bioString := "Bio:\n\n" + artistInfo.Bio.Content + "\n"
-	tagsString := "Tags:\n\n" + artistInfo.Tags.ToString("\n")
+	bioString := artistInfo.Bio.Content
+	tagsString := artistInfo.Tags.ToString("\n")
 
-	return bioString + tagsString
+	return fmt.Sprintf("Bio:\n\n%s\nTags:\n\n%s\n", bioString, tagsString)
 }
 
 // UnmarshalJSON ...
