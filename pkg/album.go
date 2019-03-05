@@ -111,8 +111,28 @@ type TopAlbums struct {
 
 // SimpleAlbum A simple album struct containing just a Name and Mbid
 type SimpleAlbum struct {
-	Name string `json:"#text"`
+	Name string `json:"name"`
 	Mbid string `json:"mbid"`
+}
+
+// UnmarshalJSON Custom unmarshal JSON
+func (album *SimpleAlbum) UnmarshalJSON(data []byte) error {
+	type Alias struct {
+		Name string `json:"#text"`
+		Mbid string `json:"mbid"`
+	}
+
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(album),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GetAlbumInfo ...

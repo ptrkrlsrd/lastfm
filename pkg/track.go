@@ -48,10 +48,36 @@ type RecentTrack struct {
 		Uts  string `json:"uts"`
 	} `json:"date"`
 	Image      []Image `json:"image"`
+	Images     Images  `json:"images,omitempty"`
 	Mbid       string  `json:"mbid"`
 	Name       string  `json:"name"`
 	Streamable string  `json:"streamable"`
 	URL        string  `json:"url"`
+}
+
+// UnmarshalJSON ...
+func (track *RecentTrack) UnmarshalJSON(data []byte) error {
+	var imgs struct {
+		Images []Image `json:"image,omitempty"`
+	}
+
+	if err := json.Unmarshal(data, &imgs); err != nil {
+		return nil
+	}
+
+	type Alias RecentTrack
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(track),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	track.Images.TransformImages(imgs.Images)
+	return nil
 }
 
 // ToString ...

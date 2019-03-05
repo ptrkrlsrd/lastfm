@@ -97,20 +97,42 @@ func (artistInfo *ArtistInfo) UnmarshalJSON(data []byte) error {
 
 // SimpleArtist ...
 type SimpleArtist struct {
-	Name string `json:"#text"`
+	Name string `json:"name"`
 	Mbid string `json:"mbid"`
+}
+
+// UnmarshalJSON Custom unmarshal JSON
+func (artist *SimpleArtist) UnmarshalJSON(data []byte) error {
+	type Alias struct {
+		Name string `json:"#text"`
+		Mbid string `json:"mbid"`
+	}
+
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(artist),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type similarArtistsResponse struct {
+	Data struct {
+		Artists []Artist `json:"artist"`
+		Query   struct {
+			Artist string
+		} `json:"@attr"`
+	} `json:"similarartists"`
 }
 
 // GetSimilarArtists ...
 func (client *Client) GetSimilarArtists(artist string) (similarArtists SimilarArtists, err error) {
-	var lastfmAPIResponse struct {
-		Data struct {
-			Artists []Artist `json:"artist"`
-			Query   struct {
-				Artist string
-			} `json:"@attr"`
-		} `json:"similarartists"`
-	}
+	var lastfmAPIResponse similarArtistsResponse
 
 	url := generateURL("artist.getsimilar", fmt.Sprintf("artist=%s", artist), client.apiKey)
 	data, err := unet.Fetch(url)

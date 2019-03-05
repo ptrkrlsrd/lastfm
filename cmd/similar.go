@@ -26,7 +26,6 @@ var similarCmd = &cobra.Command{
 	Use:   "similar",
 	Short: "Get similar artists or albums",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("similar called")
 		s, err := client.GetSimilarArtists("swans")
 		if err != nil {
 			log.Fatal(err)
