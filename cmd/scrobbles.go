@@ -36,8 +36,8 @@ var scrobblesCmd = &cobra.Command{
 			limit = len(topTracks.Tracks)
 		}
 
-		for _, v := range topTracks.Tracks[:limit] {
-			fmt.Println(v.ToString())
+		for _, track := range topTracks.Tracks[:limit] {
+			fmt.Println(track.ToString())
 		}
 	},
 }

@@ -83,12 +83,14 @@ func (track *RecentTrack) UnmarshalJSON(data []byte) error {
 // ToString ...
 func (recentTrack RecentTrack) ToString() string {
 	date := recentTrack.Date.Text
-	format := "%s: %s"
+	format := "%s %s: %s"
 	if date == "" {
-		date = "now"
+		date = "Listening now"
 	}
 
-	return fmt.Sprintf(format, recentTrack.Artist.Name, recentTrack.Name)
+	date = fmt.Sprintf("%-18v", date)
+
+	return fmt.Sprintf(format, date, recentTrack.Artist.Name, recentTrack.Name)
 }
 
 // GetTopTracks ...
