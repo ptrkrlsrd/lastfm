@@ -25,9 +25,10 @@ import (
 )
 
 var (
-	cfgFile string
-	client  lastfm.Client
-	limit   = 10
+	cfgFile  string
+	client   lastfm.Client
+	limit    = 10
+	username string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -55,8 +56,11 @@ func init() {
 	if apiKey == "" {
 		apiKey = viper.GetString("LASTFM_API")
 	}
-
 	client = lastfm.NewClient(apiKey)
+
+	if username == "" {
+		username = viper.GetString("USERNAME")
+	}
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.lastfm.yml)")
 }
@@ -75,6 +79,7 @@ func initConfig() {
 
 		// Search config in home directory with name ".lastfm" (without extension).
 		viper.AddConfigPath(home)
+		viper.AddConfigPath(home + "./config/")
 		viper.SetConfigName(".lastfm")
 	}
 

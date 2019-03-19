@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -24,9 +25,13 @@ import (
 var scrobblesCmd = &cobra.Command{
 	Use:   "scrobbles",
 	Short: "Get an users top scrobbles",
-	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		username := args[0]
+		if len(args) > 0 {
+			username = args[0]
+		} else if username == "" {
+			log.Fatal("no username")
+		}
+
 		topTracks, err := client.GetRecentTracks(username)
 		if err != nil {
 			handleError(err)
@@ -37,7 +42,7 @@ var scrobblesCmd = &cobra.Command{
 		}
 
 		for _, track := range topTracks.Tracks[:limit] {
-			fmt.Println(track.ToString())
+			fmt.Println(track.ToColoredString())
 		}
 	},
 }

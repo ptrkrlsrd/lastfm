@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/fatih/color"
 	"github.com/ptrkrlsrd/utilities/unet"
 )
 
@@ -91,6 +92,19 @@ func (recentTrack RecentTrack) ToString() string {
 	date = fmt.Sprintf("%-18v", date)
 
 	return fmt.Sprintf(format, date, recentTrack.Artist.Name, recentTrack.Name)
+}
+
+// ToColoredString ...
+func (recentTrack RecentTrack) ToColoredString() string {
+	date := recentTrack.Date.Text
+	if date == "" {
+		date = "Listening now"
+	}
+
+	date = fmt.Sprintf("%-18v", date)
+
+	d := color.New(color.FgWhite, color.Bold)
+	return fmt.Sprintf("%s %s - %s", date, d.Sprint(recentTrack.Artist.Name), d.Sprint(recentTrack.Name))
 }
 
 // GetTopTracks ...

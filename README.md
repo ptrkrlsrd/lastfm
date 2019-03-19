@@ -30,3 +30,9 @@ Flags:
 
 Use "lastfm [command] --help" for more information about a command.
 ```
+
+## Config
+* Create a file called `~/.lastfm.yml` with the following content
+``` yaml
+USERNAME: "<username>"
+```
