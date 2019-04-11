@@ -35,4 +35,6 @@ Use "lastfm [command] --help" for more information about a command.
 * Create a file called `~/.lastfm.yml` with the following content
 ``` yaml
 USERNAME: "<username>"
+LASTFM_API: "<API>"
+LASTFM_KEY: "<KEY>"
 ```
