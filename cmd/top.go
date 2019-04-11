@@ -21,23 +21,29 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// topCmd represents the top command
-var topCmd = &cobra.Command{
-	Use:   "top",
+// topAlbumsCmd ...
+var topAlbumsCmd = &cobra.Command{
+	Use:   "albums",
 	Short: "",
 	Run: func(cmd *cobra.Command, args []string) {
 		username := args[0]
-		top, err := client.GetTopTracks(username)
+		topAlbums, err := client.GetTopAlbumsByArtist(username)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		for _, v := range top {
-			fmt.Println(v.ToString())
+		for _, v := range topAlbums {
+			fmt.Println(v.Name)
 		}
 	},
 }
 
+var topCmd = &cobra.Command{
+	Use:   "top",
+	Short: "top",
+}
+
 func init() {
+	topCmd.AddCommand(topAlbumsCmd)
 	rootCmd.AddCommand(topCmd)
 }

@@ -189,3 +189,21 @@ func (client *Client) GetTopTracksByArtist(artist string) (artistInfo ArtistInfo
 
 	return lastfmAPIResponse.Info, nil
 }
+
+// GetTopAlbumsByArtist ...
+func (client *Client) GetTopAlbumsByArtist(artist string) (topAlbums []Album, err error) {
+	url := generateURL("artist.gettopalbums", fmt.Sprintf("artist=%s", artist), client.apiKey)
+	data, err := unet.Fetch(url)
+	if err != nil {
+		return []Album{}, err
+	}
+
+	var lastfmAPIResponse struct {
+		TopAlbumResponse TopAlbumResponse `json:"topalbums"`
+	}
+
+	if err = json.Unmarshal(data, &lastfmAPIResponse); err != nil {
+		return []Album{}, err
+	}
+	return lastfmAPIResponse.TopAlbumResponse.Albums, nil
+}

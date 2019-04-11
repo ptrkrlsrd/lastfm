@@ -57,10 +57,12 @@ type RecentTrack struct {
 }
 
 // UnmarshalJSON ...
-func (track *RecentTrack) UnmarshalJSON(data []byte) error {
+func (recentTrack *RecentTrack) UnmarshalJSON(data []byte) error {
 	var imgs struct {
 		Images []Image `json:"image,omitempty"`
 	}
+
+	fmt.Println(string(data))
 
 	if err := json.Unmarshal(data, &imgs); err != nil {
 		return nil
@@ -70,18 +72,18 @@ func (track *RecentTrack) UnmarshalJSON(data []byte) error {
 	aux := &struct {
 		*Alias
 	}{
-		Alias: (*Alias)(track),
+		Alias: (*Alias)(recentTrack),
 	}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
 
-	track.Images.TransformImages(imgs.Images)
+	recentTrack.Images.TransformImages(imgs.Images)
 	return nil
 }
 
-// ToString ...
+// ToString returns a track as a simple string
 func (recentTrack RecentTrack) ToString() string {
 	date := recentTrack.Date.Text
 	format := "%s %s: %s"
@@ -94,7 +96,7 @@ func (recentTrack RecentTrack) ToString() string {
 	return fmt.Sprintf(format, date, recentTrack.Artist.Name, recentTrack.Name)
 }
 
-// ToColoredString ...
+// ToColoredString returns a track as a colored string
 func (recentTrack RecentTrack) ToColoredString() string {
 	date := recentTrack.Date.Text
 	if date == "" {

@@ -25,6 +25,7 @@ import (
 var scrobblesCmd = &cobra.Command{
 	Use:   "scrobbles",
 	Short: "Get an users top scrobbles",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
 			username = args[0]
@@ -47,7 +48,26 @@ var scrobblesCmd = &cobra.Command{
 	},
 }
 
+// topTracksCmd top tracks by username
+var topTracksCmd = &cobra.Command{
+	Use:   "top",
+	Short: "",
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		username := args[0]
+		topTracks, err := client.GetTopTracks(username)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, t := range topTracks {
+			fmt.Println(t.ToString())
+		}
+	},
+}
+
 func init() {
 	scrobblesCmd.Flags().IntVarP(&limit, "limit", "l", 10, "Limit scrobble count")
+	scrobblesCmd.AddCommand(topTracksCmd)
 	rootCmd.AddCommand(scrobblesCmd)
 }

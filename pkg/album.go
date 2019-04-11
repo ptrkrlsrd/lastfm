@@ -56,13 +56,13 @@ func (albumInfo *AlbumInfo) Summary() string {
 }
 
 type Album struct {
-	Artist    Artist `json:"artist"`
-	Image     Image  `json:"image"`
-	Images    Images `json:"images,omitempty"`
-	Mbid      string `json:"mbid"`
-	Name      string `json:"name"`
-	Playcount int64  `json:"playcount"`
-	URL       string `json:"url"`
+	Artist    Artist  `json:"artist"`
+	Image     []Image `json:"image"`
+	Images    Images  `json:"images,omitempty"`
+	Mbid      string  `json:"mbid"`
+	Name      string  `json:"name"`
+	Playcount int64   `json:"playcount"`
+	URL       string  `json:"url"`
 }
 
 // UnmarshalJSON Custom unmarshal of JSON which transforms images correctly
