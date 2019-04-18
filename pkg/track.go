@@ -62,8 +62,6 @@ func (recentTrack *RecentTrack) UnmarshalJSON(data []byte) error {
 		Images []Image `json:"image,omitempty"`
 	}
 
-	fmt.Println(string(data))
-
 	if err := json.Unmarshal(data, &imgs); err != nil {
 		return nil
 	}
