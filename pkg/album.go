@@ -153,18 +153,18 @@ func (client *Client) GetAlbumInfo(artist string, album string) (albumInfo Album
 }
 
 // GetAlbumInfoByID ...
-func (client *Client) GetAlbumInfoByID(id string) (albums []Album, err error) {
-	var topAlbums TopAlbums
+func (client *Client) GetAlbumInfoByID(id string) (albums AlbumInfo, err error) {
+	var albumInfoResponse AlbumInfoResponse
 
-	url := generateURL("album.gettopalbums", fmt.Sprintf("mbid=%s", id), client.apiKey)
+	url := generateURL("album.getinfo", fmt.Sprintf("mbid=%s", id), client.apiKey)
 	data, err := unet.Fetch(url)
 	if err != nil {
-		return nil, err
+		return AlbumInfo{}, err
 	}
 
-	if err = json.Unmarshal(data, &topAlbums); err != nil {
-		return nil, err
+	if err = json.Unmarshal(data, &albumInfoResponse); err != nil {
+		return AlbumInfo{}, err
 	}
 
-	return topAlbums.Data.Albums, nil
+	return albumInfoResponse.Info, nil
 }
