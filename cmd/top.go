@@ -26,8 +26,8 @@ var topAlbumsCmd = &cobra.Command{
 	Use:   "albums",
 	Short: "",
 	Run: func(cmd *cobra.Command, args []string) {
-		username := args[0]
-		topAlbums, err := client.GetTopAlbumsByArtist(username)
+		artist := args[0]
+		topAlbums, err := client.GetArtistsTopAlbumsByName(artist)
 		if err != nil {
 			log.Fatal(err)
 		}
